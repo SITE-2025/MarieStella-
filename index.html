@@ -2,27 +2,118 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌟 2026 - Pour Marie Stella</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🌟 2026 | Marie Stella</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        :root {
+            --pink: #ff2d95;
+            --blue: #00f7ff;
+            --yellow: #ffeb3b;
+            --purple: #9c27b0;
         }
 
         body {
             background: #000;
             color: white;
-            font-family: 'Arial', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui;
             overflow: hidden;
             height: 100vh;
             width: 100vw;
+            position: fixed;
         }
 
-        /* Canvas pour les effets spéciaux */
-        #backgroundCanvas {
+        /* Écran d'accueil */
+        #welcome-screen {
             position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a0033 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s, transform 1s;
+            padding: 20px;
+        }
+
+        #welcome-screen.fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        .welcome-title {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--pink), var(--blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .year-glow {
+            font-size: clamp(4rem, 15vw, 8rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--pink), var(--blue), var(--yellow));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 50px rgba(255, 45, 149, 0.5);
+            margin: 30px 0;
+            animation: pulse 2s infinite;
+        }
+
+        .start-button {
+            padding: 18px 45px;
+            font-size: 1.3rem;
+            background: linear-gradient(45deg, var(--pink), var(--blue));
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            margin-top: 40px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .start-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Écran principal */
+        #main-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s;
+            overflow: hidden;
+        }
+
+        #main-screen.active {
+            opacity: 1;
+        }
+
+        /* Ciel étoilé */
+        .starfield {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -30,541 +121,500 @@
             z-index: -1;
         }
 
-        /* Conteneur principal */
-        .container {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            z-index: 2;
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite alternate;
         }
 
-        /* Nom et année */
-        .name-title {
-            font-size: clamp(2rem, 8vw, 4.5rem);
-            text-align: center;
-            margin-bottom: 20px;
-            opacity: 0;
-            animation: fadeInUp 2s ease 0.5s forwards;
-            background: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-            font-weight: bold;
-            letter-spacing: 3px;
-        }
-
-        /* Conteneur des 3 voeux */
-        .wishes-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 30px;
-            margin: 40px 0;
-            max-width: 1200px;
-            opacity: 0;
-            animation: fadeInUp 2s ease 1s forwards;
-        }
-
-        /* Style des voeux */
-        .wish {
-            width: 300px;
-            height: 300px;
-            perspective: 1000px;
-            cursor: pointer;
-        }
-
-        .wish-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            transition: transform 0.8s;
-        }
-
-        .wish:hover .wish-inner {
-            transform: rotateY(180deg);
-        }
-
-        .wish-front, .wish-back {
+        /* Voeux flottants */
+        .wish-container {
             position: absolute;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden;
-            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        .wish-bubble {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 30px;
             text-align: center;
+            padding: 30px;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.3s;
+            will-change: transform;
         }
 
-        .wish-front {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .wish-bubble:active {
+            transform: scale(0.9);
         }
 
-        .wish-back {
-            background: linear-gradient(45deg, rgba(255, 0, 255, 0.2), rgba(0, 255, 255, 0.2));
-            transform: rotateY(180deg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        .wish-bubble:nth-child(1) {
+            background: radial-gradient(circle, rgba(255, 45, 149, 0.2), rgba(255, 45, 149, 0.05));
+            border: 2px solid var(--pink);
+            box-shadow: 0 0 40px rgba(255, 45, 149, 0.3);
+            top: 20%;
+            left: 10%;
         }
 
-        .wish-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 20px currentColor);
+        .wish-bubble:nth-child(2) {
+            background: radial-gradient(circle, rgba(0, 247, 255, 0.2), rgba(0, 247, 255, 0.05));
+            border: 2px solid var(--blue);
+            box-shadow: 0 0 40px rgba(0, 247, 255, 0.3);
+            top: 60%;
+            right: 10%;
+        }
+
+        .wish-bubble:nth-child(3) {
+            background: radial-gradient(circle, rgba(255, 235, 59, 0.2), rgba(255, 235, 59, 0.05));
+            border: 2px solid var(--yellow);
+            box-shadow: 0 0 40px rgba(255, 235, 59, 0.3);
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .wish-emoji {
+            font-size: 4.5rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px currentColor);
         }
 
         .wish-text {
-            font-size: 1.8rem;
-            font-weight: bold;
+            font-size: 2.2rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, #fff, #eee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
-        /* Effet de particules cliquables */
-        .particle {
+        /* Nom flottant */
+        .name-floating {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            pointer-events: none;
-            z-index: 1;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 0 20px var(--pink);
+            z-index: 10;
+            text-align: center;
+            width: 100%;
+            padding: 0 20px;
         }
 
-        /* Bouton central */
-        .center-button {
-            position: fixed;
-            bottom: 40px;
+        /* Bouton magique */
+        .magic-button {
+            position: absolute;
+            bottom: 15%;
             left: 50%;
             transform: translateX(-50%);
             padding: 20px 50px;
             font-size: 1.5rem;
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            background: linear-gradient(45deg, var(--pink), var(--purple));
             border: none;
             border-radius: 50px;
             color: white;
             cursor: pointer;
-            opacity: 0;
-            animation: fadeInUp 2s ease 2s forwards;
-            z-index: 10;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
-        }
-
-        .center-button:hover {
-            transform: translateX(-50%) scale(1.1);
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.7);
-        }
-
-        /* Messages surprises */
-        .surprise-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 40px;
-            border-radius: 20px;
-            border: 2px solid #ff00ff;
-            text-align: center;
             z-index: 100;
-            transition: transform 0.5s ease;
+            font-weight: 600;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(255, 45, 149, 0.4);
+        }
+
+        .magic-button:active {
+            transform: translateX(-50%) scale(0.95);
+            box-shadow: 0 5px 15px rgba(255, 45, 149, 0.6);
+        }
+
+        /* Explosions de particules */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 24px;
+            z-index: 5;
+        }
+
+        /* Message surprise */
+        .surprise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .surprise-overlay.active {
+            display: flex;
+        }
+
+        .surprise-content {
+            background: linear-gradient(135deg, rgba(255, 45, 149, 0.1), rgba(0, 247, 255, 0.1));
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
             max-width: 500px;
             width: 90%;
-            backdrop-filter: blur(10px);
+            border: 2px solid var(--pink);
+            backdrop-filter: blur(20px);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .surprise-message.active {
-            transform: translate(-50%, -50%) scale(1);
+        .surprise-emoji {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .surprise-text {
+            font-size: 1.8rem;
+            line-height: 1.4;
+            margin-bottom: 30px;
+            color: white;
         }
 
         .close-surprise {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
+            padding: 12px 35px;
+            background: var(--pink);
             border: none;
+            border-radius: 25px;
             color: white;
-            font-size: 2rem;
+            font-size: 1.2rem;
             cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        /* Année flottante */
-        .floating-year {
-            position: fixed;
-            font-size: 20vw;
-            font-weight: bold;
-            opacity: 0.03;
-            z-index: -1;
-            color: white;
-            animation: float 30s infinite linear;
-            pointer-events: none;
+        .close-surprise:active {
+            transform: scale(0.95);
         }
 
         /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
 
         @keyframes float {
-            0% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            100% {
-                transform: translate(100px, 100px) rotate(360deg);
-            }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
-        @keyframes glow {
-            0%, 100% {
-                box-shadow: 0 0 20px #ff00ff;
-            }
-            50% {
-                box-shadow: 0 0 40px #00ffff;
-            }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         /* Responsive */
-        @media (max-width: 1000px) {
-            .wish {
-                width: 250px;
-                height: 250px;
+        @media (max-width: 768px) {
+            .wish-bubble {
+                width: 220px;
+                height: 220px;
+            }
+
+            .wish-emoji {
+                font-size: 3.5rem;
+            }
+
+            .wish-text {
+                font-size: 1.8rem;
+            }
+
+            .magic-button {
+                padding: 18px 40px;
+                font-size: 1.3rem;
+                bottom: 12%;
             }
         }
 
-        @media (max-width: 768px) {
-            .wishes-container {
-                flex-direction: column;
-                align-items: center;
+        @media (max-width: 480px) {
+            .wish-bubble {
+                width: 180px;
+                height: 180px;
             }
-            
-            .wish {
-                width: 280px;
-                height: 280px;
+
+            .wish-emoji {
+                font-size: 2.8rem;
             }
+
+            .wish-text {
+                font-size: 1.5rem;
+            }
+
+            .magic-button {
+                padding: 16px 35px;
+                font-size: 1.1rem;
+                bottom: 10%;
+            }
+
+            .name-floating {
+                top: 8%;
+            }
+
+            /* Repositionner les bulles sur petit écran */
+            .wish-bubble:nth-child(1) {
+                top: 15%;
+                left: 5%;
+            }
+
+            .wish-bubble:nth-child(2) {
+                top: 55%;
+                right: 5%;
+            }
+
+            .wish-bubble:nth-child(3) {
+                bottom: 15%;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        @media (max-height: 700px) {
+            .wish-bubble {
+                width: 170px;
+                height: 170px;
+            }
+
+            .wish-emoji {
+                font-size: 2.5rem;
+            }
+
+            .wish-text {
+                font-size: 1.3rem;
+            }
+
+            .magic-button {
+                bottom: 8%;
+            }
+        }
+
+        /* Landscape */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .wish-bubble {
+                width: 150px;
+                height: 150px;
+            }
+
+            .wish-emoji {
+                font-size: 2rem;
+            }
+
+            .wish-text {
+                font-size: 1.1rem;
+            }
+
+            .magic-button {
+                padding: 12px 30px;
+                font-size: 1rem;
+                bottom: 5%;
+            }
+
+            .name-floating {
+                font-size: 1.5rem;
+                top: 5%;
+            }
+        }
+
+        /* Éviter le zoom sur iOS */
+        input, button {
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <!-- Canvas pour effets -->
-    <canvas id="backgroundCanvas"></canvas>
-    
-    <!-- Année flottante en arrière-plan -->
-    <div class="floating-year">2026</div>
-    
-    <!-- Contenu principal -->
-    <div class="container">
-        <h1 class="name-title">MARIE STELLA</h1>
+    <!-- Écran d'accueil -->
+    <div id="welcome-screen">
+        <div class="welcome-title">POUR</div>
+        <div class="year-glow">2026</div>
+        <div class="welcome-title">MARIE STELLA</div>
+        <button class="start-button">ENTRER DANS LA MAGIE</button>
+    </div>
+
+    <!-- Écran principal -->
+    <div id="main-screen">
+        <!-- Ciel étoilé -->
+        <div class="starfield" id="starfield"></div>
         
-        <div class="wishes-container">
-            <!-- Voeu 1 -->
-            <div class="wish" data-surprise="1">
-                <div class="wish-inner">
-                    <div class="wish-front">
-                        <div class="wish-icon" style="color: #ff00ff;">❤️</div>
-                        <div class="wish-text">Amour</div>
-                    </div>
-                    <div class="wish-back">
-                        <div class="wish-icon" style="color: #00ffff;">✨</div>
-                        <div class="wish-text">Que l'amour t'entoure</div>
-                    </div>
-                </div>
+        <!-- Nom -->
+        <div class="name-floating">🌟 MARIE STELLA 🌟</div>
+        
+        <!-- Voeux flottants -->
+        <div class="wish-container">
+            <div class="wish-bubble" data-surprise="1">
+                <div class="wish-emoji">💖</div>
+                <div class="wish-text">Amour</div>
             </div>
             
-            <!-- Voeu 2 -->
-            <div class="wish" data-surprise="2">
-                <div class="wish-inner">
-                    <div class="wish-front">
-                        <div class="wish-icon" style="color: #ffff00;">🌟</div>
-                        <div class="wish-text">Rêves</div>
-                    </div>
-                    <div class="wish-back">
-                        <div class="wish-icon" style="color: #ff00ff;">💫</div>
-                        <div class="wish-text">Que tes rêves se réalisent</div>
-                    </div>
-                </div>
+            <div class="wish-bubble" data-surprise="2">
+                <div class="wish-emoji">✨</div>
+                <div class="wish-text">Rêves</div>
             </div>
             
-            <!-- Voeu 3 -->
-            <div class="wish" data-surprise="3">
-                <div class="wish-inner">
-                    <div class="wish-front">
-                        <div class="wish-icon" style="color: #00ffff;">🎉</div>
-                        <div class="wish-text">Joie</div>
-                    </div>
-                    <div class="wish-back">
-                        <div class="wish-icon" style="color: #ffff00;">😊</div>
-                        <div class="wish-text">Que la joie t'accompagne</div>
-                    </div>
-                </div>
+            <div class="wish-bubble" data-surprise="3">
+                <div class="wish-emoji">🎉</div>
+                <div class="wish-text">Joie</div>
             </div>
         </div>
         
-        <button class="center-button">✨ TOUCHÉ-MOI ✨</button>
+        <!-- Bouton magique -->
+        <button class="magic-button">✨ TOUCHE MAGIQUE ✨</button>
     </div>
-    
-    <!-- Messages surprises -->
-    <div class="surprise-message" id="surprise1">
-        <button class="close-surprise">×</button>
-        <div style="font-size: 3rem; margin-bottom: 20px;">💖</div>
-        <div style="font-size: 1.5rem; color: #ff00ff;">Que chaque jour soit rempli d'affection et de tendresse</div>
-    </div>
-    
-    <div class="surprise-message" id="surprise2">
-        <button class="close-surprise">×</button>
-        <div style="font-size: 3rem; margin-bottom: 20px;">🌌</div>
-        <div style="font-size: 1.5rem; color: #00ffff;">Que les étoiles guident tes plus beaux projets</div>
-    </div>
-    
-    <div class="surprise-message" id="surprise3">
-        <button class="close-surprise">×</button>
-        <div style="font-size: 3rem; margin-bottom: 20px;">🎇</div>
-        <div style="font-size: 1.5rem; color: #ffff00;">Que ton sourire illumine toute l'année</div>
+
+    <!-- Message surprise -->
+    <div class="surprise-overlay" id="surprise-overlay">
+        <div class="surprise-content" id="surprise-content">
+            <div class="surprise-emoji" id="surprise-emoji">💖</div>
+            <div class="surprise-text" id="surprise-text"></div>
+            <button class="close-surprise" id="close-surprise">RETOUR À LA MAGIE</button>
+        </div>
     </div>
 
     <script>
-        // Effets canvas avancés
-        const canvas = document.getElementById('backgroundCanvas');
-        const ctx = canvas.getContext('2d');
+        // Éléments DOM
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const mainScreen = document.getElementById('main-screen');
+        const startButton = document.querySelector('.start-button');
+        const starfield = document.getElementById('starfield');
+        const wishBubbles = document.querySelectorAll('.wish-bubble');
+        const magicButton = document.querySelector('.magic-button');
+        const surpriseOverlay = document.getElementById('surprise-overlay');
+        const surpriseEmoji = document.getElementById('surprise-emoji');
+        const surpriseText = document.getElementById('surprise-text');
+        const closeSurprise = document.getElementById('close-surprise');
         
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        // Particules
-        let particles = [];
-        const particleCount = 100;
-        
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 5 + 1;
-                this.speedX = Math.random() * 3 - 1.5;
-                this.speedY = Math.random() * 3 - 1.5;
-                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
-                this.alpha = Math.random() * 0.5 + 0.2;
+        // Messages surprises
+        const surprises = {
+            1: {
+                emoji: '💖',
+                text: 'Que 2026 t\'apporte un amour pur et sincère'
+            },
+            2: {
+                emoji: '✨',
+                text: 'Que tous tes rêves les plus fous se réalisent'
+            },
+            3: {
+                emoji: '🎉',
+                text: 'Que chaque jour soit une fête de bonheur'
             }
+        };
+        
+        // Créer le ciel étoilé
+        function createStarfield() {
+            const starCount = Math.min(100, window.innerWidth / 10);
             
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
                 
-                if (this.x > canvas.width) this.x = 0;
-                if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0;
-                if (this.y < 0) this.y = canvas.height;
-            }
-            
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = this.alpha;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+                // Taille aléatoire
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Position aléatoire
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Animation aléatoire
+                const duration = Math.random() * 3 + 1;
+                star.style.setProperty('--duration', `${duration}s`);
+                
+                // Opacité aléatoire
+                star.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                starfield.appendChild(star);
             }
         }
         
-        // Initialiser les particules
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
-        }
-        
-        // Animation des particules
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Effet de connexion entre particules
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 100) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - distance/100)})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-                
-                particles[i].update();
-                particles[i].draw();
-            }
-            
-            requestAnimationFrame(animateParticles);
-        }
-        
-        // Redimensionnement
-        window.addEventListener('resize', function() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initParticles();
-        });
-        
-        // Effets de clic
-        document.addEventListener('click', function(e) {
-            // Créer des étoiles au clic
-            for (let i = 0; i < 20; i++) {
-                createStar(e.clientX, e.clientY);
-            }
-            
-            // Son de clic (optionnel)
-            playClickSound();
-        });
-        
-        function createStar(x, y) {
-            const star = document.createElement('div');
-            star.className = 'particle';
-            star.style.left = x + 'px';
-            star.style.top = y + 'px';
-            star.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
-            star.innerHTML = ['✨', '🌟', '⭐', '💫', '🌠'][Math.floor(Math.random() * 5)];
-            star.style.fontSize = Math.random() * 30 + 10 + 'px';
-            
-            document.body.appendChild(star);
-            
-            // Animation
-            const angle = Math.random() * Math.PI * 2;
-            const speed = 2 + Math.random() * 3;
-            const vx = Math.cos(angle) * speed;
-            const vy = Math.sin(angle) * speed;
-            
-            let opacity = 1;
-            const animate = setInterval(() => {
-                x += vx;
-                y += vy;
-                opacity -= 0.02;
-                
-                star.style.left = x + 'px';
-                star.style.top = y + 'px';
-                star.style.opacity = opacity;
-                
-                if (opacity <= 0) {
-                    clearInterval(animate);
-                    star.remove();
-                }
-            }, 16);
-        }
-        
-        // Gestion des voeux
-        const wishes = document.querySelectorAll('.wish');
-        const surpriseMessages = document.querySelectorAll('.surprise-message');
-        const closeButtons = document.querySelectorAll('.close-surprise');
-        const centerButton = document.querySelector('.center-button');
-        
-        // Au clic sur un voeu
-        wishes.forEach(wish => {
-            wish.addEventListener('click', function() {
-                const surpriseId = this.dataset.surprise;
-                document.getElementById(`surprise${surpriseId}`).classList.add('active');
-                
-                // Effet spécial
-                createFireworks();
-            });
-        });
-        
-        // Fermer les messages
-        closeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                this.parentElement.classList.remove('active');
-            });
-        });
-        
-        // Fermer en cliquant à l'extérieur
-        surpriseMessages.forEach(message => {
-            message.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('active');
-                }
-            });
-        });
-        
-        // Bouton central
-        centerButton.addEventListener('click', function() {
-            // Effet spécial majeur
-            createMegaExplosion();
-            
-            // Changer le texte brièvement
-            const originalText = this.textContent;
-            this.textContent = '🌟 WOW ! 🌟';
-            
-            setTimeout(() => {
-                this.textContent = originalText;
-            }, 1000);
-        });
-        
-        // Effets spéciaux
-        function createFireworks() {
-            for (let i = 0; i < 50; i++) {
+        // Créer des particules
+        function createParticles(x, y, count = 15, emoji = '✨') {
+            for (let i = 0; i < count; i++) {
                 setTimeout(() => {
-                    const x = Math.random() * window.innerWidth;
-                    const y = Math.random() * window.innerHeight;
-                    createStar(x, y);
-                }, i * 20);
-            }
-        }
-        
-        function createMegaExplosion() {
-            // Explosion en forme de coeur
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-            
-            for (let i = 0; i < 200; i++) {
-                setTimeout(() => {
-                    // Créer un motif en forme de coeur
-                    const t = i / 20;
-                    const x = 16 * Math.pow(Math.sin(t), 3);
-                    const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.innerHTML = emoji;
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
                     
-                    const star = document.createElement('div');
-                    star.className = 'particle';
-                    star.style.left = (centerX + x * 10) + 'px';
-                    star.style.top = (centerY + y * 10) + 'px';
-                    star.style.color = '#ff00ff';
-                    star.innerHTML = '❤️';
-                    star.style.fontSize = '20px';
+                    // Taille aléatoire
+                    const size = Math.random() * 30 + 20;
+                    particle.style.fontSize = `${size}px`;
                     
-                    document.body.appendChild(star);
+                    // Couleur aléatoire
+                    const colors = ['#ff2d95', '#00f7ff', '#ffeb3b', '#9c27b0'];
+                    particle.style.color = colors[Math.floor(Math.random() * colors.length)];
                     
                     // Animation
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 2 + Math.random() * 3;
+                    const vx = Math.cos(angle) * speed;
+                    const vy = Math.sin(angle) * speed;
+                    
+                    document.body.appendChild(particle);
+                    
+                    // Animer la particule
                     let opacity = 1;
-                    const animate = setInterval(() => {
+                    const animate = () => {
+                        x += vx;
+                        y += vy;
                         opacity -= 0.02;
-                        star.style.opacity = opacity;
-                        star.style.transform = `scale(${1 + (1 - opacity)})`;
                         
-                        if (opacity <= 0) {
-                            clearInterval(animate);
-                            star.remove();
+                        particle.style.left = `${x}px`;
+                        particle.style.top = `${y}px`;
+                        particle.style.opacity = opacity;
+                        
+                        if (opacity > 0) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            particle.remove();
                         }
-                    }, 16);
-                }, i * 10);
+                    };
+                    
+                    animate();
+                }, i * 30);
             }
         }
         
-        // Son interactif (très discret)
-        function playClickSound() {
+        // Effet d'explosion
+        function createExplosion(x, y) {
+            const emojis = ['✨', '🌟', '⭐', '💫', '🎇', '🎆', '🔥', '💖'];
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                    createParticles(x, y, 1, emoji);
+                }, i * 20);
+            }
+            
+            // Son discret (si supporté)
+            playSparkleSound();
+        }
+        
+        // Son d'étincelle
+        function playSparkleSound() {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
@@ -581,32 +631,141 @@
                 
                 oscillator.start(audioContext.currentTime);
                 oscillator.stop(audioContext.currentTime + 0.1);
-            } catch(e) {
-                // Son non supporté, pas grave
+            } catch (e) {
+                // Ignorer si audio non supporté
             }
         }
         
-        // Démarrer tout
-        initParticles();
-        animateParticles();
+        // Afficher un message surprise
+        function showSurprise(id) {
+            const surprise = surprises[id];
+            if (!surprise) return;
+            
+            surpriseEmoji.innerHTML = surprise.emoji;
+            surpriseText.textContent = surprise.text;
+            surpriseOverlay.classList.add('active');
+            
+            createExplosion(window.innerWidth / 2, window.innerHeight / 2);
+        }
         
-        // Animation du nom
-        const nameTitle = document.querySelector('.name-title');
-        let hue = 0;
+        // Initialisation
+        function init() {
+            createStarfield();
+            
+            // Démarrer l'expérience
+            startButton.addEventListener('click', () => {
+                welcomeScreen.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    mainScreen.classList.add('active');
+                    createExplosion(window.innerWidth / 2, window.innerHeight / 2);
+                }, 800);
+            });
+            
+            // Voeux cliquables
+            wishBubbles.forEach(bubble => {
+                bubble.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const surpriseId = bubble.dataset.surprise;
+                    showSurprise(surpriseId);
+                    
+                    // Effet sur la bulle
+                    const rect = bubble.getBoundingClientRect();
+                    createExplosion(rect.left + rect.width / 2, rect.top + rect.height / 2);
+                });
+            });
+            
+            // Bouton magique
+            magicButton.addEventListener('click', () => {
+                createExplosion(window.innerWidth / 2, window.innerHeight / 2);
+                
+                // Changer temporairement le texte
+                const originalText = magicButton.textContent;
+                magicButton.textContent = '✨ WOW ! ✨';
+                magicButton.style.background = 'linear-gradient(45deg, #ffeb3b, #9c27b0)';
+                
+                setTimeout(() => {
+                    magicButton.textContent = originalText;
+                    magicButton.style.background = 'linear-gradient(45deg, #ff2d95, #9c27b0)';
+                }, 1000);
+            });
+            
+            // Fermer le message surprise
+            closeSurprise.addEventListener('click', () => {
+                surpriseOverlay.classList.remove('active');
+                createExplosion(window.innerWidth / 2, window.innerHeight / 2);
+            });
+            
+            // Fermer en cliquant à l'extérieur
+            surpriseOverlay.addEventListener('click', (e) => {
+                if (e.target === surpriseOverlay) {
+                    surpriseOverlay.classList.remove('active');
+                    createExplosion(window.innerWidth / 2, window.innerHeight / 2);
+                }
+            });
+            
+            // Clic n'importe où pour des particules
+            document.addEventListener('click', (e) => {
+                if (e.target !== startButton && 
+                    e.target !== magicButton && 
+                    !e.target.closest('.wish-bubble') &&
+                    !e.target.closest('.surprise-content')) {
+                    
+                    createParticles(e.clientX, e.clientY, 5);
+                }
+            });
+            
+            // Support tactile
+            document.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    const touch = e.touches[0];
+                    if (touch.target !== startButton && 
+                        touch.target !== magicButton && 
+                        !touch.target.closest('.wish-bubble') &&
+                        !touch.target.closest('.surprise-content')) {
+                        
+                        createParticles(touch.clientX, touch.clientY, 3);
+                    }
+                }
+            }, { passive: true });
+            
+            // Ajuster la position des bulles sur mobile
+            function adjustBubblePositions() {
+                const bubbles = document.querySelectorAll('.wish-bubble');
+                
+                if (window.innerWidth < 480) {
+                    // Petit écran portrait
+                    bubbles[0].style.top = '15%';
+                    bubbles[0].style.left = '5%';
+                    bubbles[1].style.top = '55%';
+                    bubbles[1].style.right = '5%';
+                    bubbles[2].style.bottom = '15%';
+                    bubbles[2].style.left = '50%';
+                } else if (window.innerHeight < 500 && window.innerWidth > window.innerHeight) {
+                    // Paysage
+                    bubbles[0].style.top = '30%';
+                    bubbles[0].style.left = '10%';
+                    bubbles[1].style.top = '30%';
+                    bubbles[1].style.right = '10%';
+                    bubbles[2].style.top = '30%';
+                    bubbles[2].style.left = '50%';
+                }
+            }
+            
+            window.addEventListener('resize', adjustBubblePositions);
+            adjustBubblePositions();
+            
+            // Prévenir le zoom sur iOS
+            document.addEventListener('gesturestart', (e) => {
+                e.preventDefault();
+            });
+            
+            console.log('🎆 Expérience 2026 prête pour Marie Stella !');
+            console.log('💫 Touchez tout pour de la magie !');
+        }
         
-        setInterval(() => {
-            hue = (hue + 1) % 360;
-            nameTitle.style.background = `linear-gradient(45deg, 
-                hsl(${hue}, 100%, 50%), 
-                hsl(${(hue + 60) % 360}, 100%, 50%), 
-                hsl(${(hue + 120) % 360}, 100%, 50%))`;
-            nameTitle.style.webkitBackgroundClip = 'text';
-            nameTitle.style.backgroundClip = 'text';
-        }, 50);
-        
-        // Message de démarrage
-        console.log('🌟 Site 2026 pour Marie Stella chargé !');
-        console.log('✨ Clique partout pour des surprises !');
+        // Démarrer quand la page est chargée
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
