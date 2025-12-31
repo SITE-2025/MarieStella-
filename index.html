@@ -16,7 +16,7 @@
         :root {
             --pink: #ff2d95;
             --blue: #00f7ff;
-            --yellow: #ffeb3b;
+            --gold: #ffd700;
             --purple: #9c27b0;
         }
 
@@ -68,7 +68,7 @@
         .year-glow {
             font-size: clamp(4rem, 15vw, 8rem);
             font-weight: 900;
-            background: linear-gradient(45deg, var(--pink), var(--blue), var(--yellow));
+            background: linear-gradient(45deg, var(--pink), var(--blue), var(--gold));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -111,8 +111,8 @@
             opacity: 1;
         }
 
-        /* Ciel étoilé */
-        .starfield {
+        /* Canvas pour feux d'artifice */
+        #fireworks-canvas {
             position: absolute;
             top: 0;
             left: 0;
@@ -121,104 +121,82 @@
             z-index: -1;
         }
 
-        .star {
+        /* 2026 qui sort au centre */
+        .year-2026 {
             position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle var(--duration) infinite alternate;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(6rem, 20vw, 12rem);
+            font-weight: 900;
+            color: transparent;
+            background: linear-gradient(45deg, var(--gold), var(--pink), var(--blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-shadow: 0 0 100px rgba(255, 215, 0, 0.5);
+            animation: yearGlow 3s infinite alternate;
+            z-index: 5;
         }
 
-        /* Voeux flottants */
-        .wish-container {
+        /* Boutons des voeux */
+        .wishes-container {
             position: absolute;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-        }
-
-        .wish-bubble {
-            position: absolute;
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 30px;
-            cursor: pointer;
-            pointer-events: auto;
-            transition: transform 0.3s;
-            will-change: transform;
+            gap: 30px;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        .wish-bubble:active {
-            transform: scale(0.9);
-        }
-
-        .wish-bubble:nth-child(1) {
-            background: radial-gradient(circle, rgba(255, 45, 149, 0.2), rgba(255, 45, 149, 0.05));
-            border: 2px solid var(--pink);
-            box-shadow: 0 0 40px rgba(255, 45, 149, 0.3);
-            top: 20%;
-            left: 10%;
-        }
-
-        .wish-bubble:nth-child(2) {
-            background: radial-gradient(circle, rgba(0, 247, 255, 0.2), rgba(0, 247, 255, 0.05));
-            border: 2px solid var(--blue);
-            box-shadow: 0 0 40px rgba(0, 247, 255, 0.3);
-            top: 60%;
-            right: 10%;
-        }
-
-        .wish-bubble:nth-child(3) {
-            background: radial-gradient(circle, rgba(255, 235, 59, 0.2), rgba(255, 235, 59, 0.05));
-            border: 2px solid var(--yellow);
-            box-shadow: 0 0 40px rgba(255, 235, 59, 0.3);
-            bottom: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .wish-emoji {
-            font-size: 4.5rem;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 15px currentColor);
-        }
-
-        .wish-text {
+        .wish-button {
+            width: 80vw;
+            max-width: 400px;
+            padding: 25px 40px;
             font-size: 2.2rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            background: linear-gradient(45deg, #fff, #eee);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        /* Nom flottant */
-        .name-floating {
-            position: absolute;
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: clamp(1.8rem, 6vw, 3rem);
-            font-weight: 700;
+            letter-spacing: 3px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid;
+            border-radius: 20px;
             color: white;
-            text-shadow: 0 0 20px var(--pink);
-            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s;
+            pointer-events: auto;
+            backdrop-filter: blur(10px);
             text-align: center;
-            width: 100%;
-            padding: 0 20px;
+            text-shadow: 0 0 15px currentColor;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        /* Bouton magique */
-        .magic-button {
+        .wish-button:active {
+            transform: scale(0.95);
+        }
+
+        .wish-button:nth-child(1) {
+            border-color: var(--pink);
+            color: var(--pink);
+            margin-top: 180px;
+        }
+
+        .wish-button:nth-child(2) {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .wish-button:nth-child(3) {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Bouton message personnalisé */
+        .message-button {
             position: absolute;
-            bottom: 15%;
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
             padding: 20px 50px;
@@ -232,24 +210,32 @@
             font-weight: 600;
             letter-spacing: 2px;
             transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(255, 45, 149, 0.4);
+            box-shadow: 0 10px 40px rgba(255, 45, 149, 0.6);
+            white-space: nowrap;
         }
 
-        .magic-button:active {
+        .message-button:active {
             transform: translateX(-50%) scale(0.95);
-            box-shadow: 0 5px 15px rgba(255, 45, 149, 0.6);
+            box-shadow: 0 5px 20px rgba(255, 45, 149, 0.8);
         }
 
-        /* Explosions de particules */
-        .particle {
+        /* Nom en haut */
+        .name-header {
             position: absolute;
-            pointer-events: none;
-            font-size: 24px;
-            z-index: 5;
+            top: 40px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 0 20px var(--pink);
+            z-index: 10;
+            padding: 0 20px;
         }
 
-        /* Message surprise */
-        .surprise-overlay {
+        /* Message personnalisé */
+        .message-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -259,51 +245,54 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
             padding: 20px;
         }
 
-        .surprise-overlay.active {
+        .message-overlay.active {
             display: flex;
+            animation: fadeIn 0.5s;
         }
 
-        .surprise-content {
+        .message-box {
             background: linear-gradient(135deg, rgba(255, 45, 149, 0.1), rgba(0, 247, 255, 0.1));
             border-radius: 25px;
             padding: 40px;
             text-align: center;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
-            border: 2px solid var(--pink);
+            border: 3px solid var(--pink);
             backdrop-filter: blur(20px);
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .surprise-emoji {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .surprise-text {
-            font-size: 1.8rem;
-            line-height: 1.4;
+        .message-title {
+            font-size: 2.5rem;
+            color: var(--gold);
             margin-bottom: 30px;
-            color: white;
+            text-shadow: 0 0 20px var(--gold);
         }
 
-        .close-surprise {
-            padding: 12px 35px;
+        .message-content {
+            font-size: 1.6rem;
+            line-height: 1.5;
+            color: white;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .close-message {
+            padding: 15px 40px;
             background: var(--pink);
             border: none;
             border-radius: 25px;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             cursor: pointer;
             transition: transform 0.2s;
         }
 
-        .close-surprise:active {
+        .close-message:active {
             transform: scale(0.95);
         }
 
@@ -313,132 +302,138 @@
             50% { transform: scale(1.05); }
         }
 
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+        @keyframes yearGlow {
+            0% {
+                text-shadow: 0 0 50px rgba(255, 215, 0, 0.5),
+                           0 0 100px rgba(255, 45, 149, 0.3),
+                           0 0 150px rgba(0, 247, 255, 0.2);
+            }
+            100% {
+                text-shadow: 0 0 80px rgba(255, 215, 0, 0.7),
+                           0 0 150px rgba(255, 45, 149, 0.5),
+                           0 0 200px rgba(0, 247, 255, 0.3);
+            }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .wish-bubble {
-                width: 220px;
-                height: 220px;
-            }
-
-            .wish-emoji {
-                font-size: 3.5rem;
-            }
-
-            .wish-text {
+            .wish-button {
                 font-size: 1.8rem;
+                padding: 20px 30px;
+                width: 85vw;
             }
 
-            .magic-button {
-                padding: 18px 40px;
+            .message-button {
+                padding: 18px 35px;
                 font-size: 1.3rem;
-                bottom: 12%;
+                bottom: 80px;
+            }
+
+            .message-box {
+                padding: 30px;
+            }
+
+            .message-content {
+                font-size: 1.4rem;
             }
         }
 
         @media (max-width: 480px) {
-            .wish-bubble {
-                width: 180px;
-                height: 180px;
+            .wish-button {
+                font-size: 1.5rem;
+                padding: 18px 25px;
+                letter-spacing: 2px;
+                margin-top: 160px;
             }
 
-            .wish-emoji {
-                font-size: 2.8rem;
+            .wish-button:nth-child(1) {
+                margin-top: 140px;
             }
 
-            .wish-text {
+            .message-button {
+                padding: 16px 30px;
+                font-size: 1.2rem;
+                bottom: 70px;
+            }
+
+            .name-header {
+                top: 30px;
                 font-size: 1.5rem;
             }
 
-            .magic-button {
-                padding: 16px 35px;
-                font-size: 1.1rem;
-                bottom: 10%;
-            }
-
-            .name-floating {
-                top: 8%;
-            }
-
-            /* Repositionner les bulles sur petit écran */
-            .wish-bubble:nth-child(1) {
-                top: 15%;
-                left: 5%;
-            }
-
-            .wish-bubble:nth-child(2) {
-                top: 55%;
-                right: 5%;
-            }
-
-            .wish-bubble:nth-child(3) {
-                bottom: 15%;
-                left: 50%;
-                transform: translateX(-50%);
+            .year-2026 {
+                font-size: clamp(4rem, 15vw, 8rem);
             }
         }
 
         @media (max-height: 700px) {
-            .wish-bubble {
-                width: 170px;
-                height: 170px;
+            .wish-button:nth-child(1) {
+                margin-top: 120px;
             }
 
-            .wish-emoji {
-                font-size: 2.5rem;
-            }
-
-            .wish-text {
-                font-size: 1.3rem;
-            }
-
-            .magic-button {
-                bottom: 8%;
-            }
-        }
-
-        /* Landscape */
-        @media (orientation: landscape) and (max-height: 500px) {
-            .wish-bubble {
-                width: 150px;
-                height: 150px;
-            }
-
-            .wish-emoji {
-                font-size: 2rem;
-            }
-
-            .wish-text {
+            .message-button {
+                bottom: 60px;
+                padding: 14px 25px;
                 font-size: 1.1rem;
             }
 
-            .magic-button {
-                padding: 12px 30px;
-                font-size: 1rem;
-                bottom: 5%;
-            }
-
-            .name-floating {
-                font-size: 1.5rem;
-                top: 5%;
+            .name-header {
+                top: 20px;
             }
         }
 
-        /* Éviter le zoom sur iOS */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .wishes-container {
+                flex-direction: row;
+                justify-content: center;
+                gap: 20px;
+            }
+
+            .wish-button {
+                width: 30%;
+                padding: 15px;
+                font-size: 1.2rem;
+                margin-top: 0;
+            }
+
+            .wish-button:nth-child(1) {
+                margin-top: 0;
+            }
+
+            .message-button {
+                bottom: 30px;
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+
+            .name-header {
+                top: 15px;
+                font-size: 1.3rem;
+            }
+
+            .year-2026 {
+                top: 40%;
+                font-size: 4rem;
+            }
+        }
+
+        /* Éviter le zoom iOS */
         input, button {
             font-size: 16px;
         }
@@ -455,40 +450,38 @@
 
     <!-- Écran principal -->
     <div id="main-screen">
-        <!-- Ciel étoilé -->
-        <div class="starfield" id="starfield"></div>
+        <!-- Canvas pour feux d'artifice -->
+        <canvas id="fireworks-canvas"></canvas>
         
-        <!-- Nom -->
-        <div class="name-floating">🌟 MARIE STELLA 🌟</div>
+        <!-- 2026 au centre -->
+        <div class="year-2026">2026</div>
         
-        <!-- Voeux flottants -->
-        <div class="wish-container">
-            <div class="wish-bubble" data-surprise="1">
-                <div class="wish-emoji">💖</div>
-                <div class="wish-text">Amour</div>
-            </div>
-            
-            <div class="wish-bubble" data-surprise="2">
-                <div class="wish-emoji">✨</div>
-                <div class="wish-text">Rêves</div>
-            </div>
-            
-            <div class="wish-bubble" data-surprise="3">
-                <div class="wish-emoji">🎉</div>
-                <div class="wish-text">Joie</div>
-            </div>
+        <!-- Nom en haut -->
+        <div class="name-header">MARIE STELLA</div>
+        
+        <!-- Boutons des voeux -->
+        <div class="wishes-container">
+            <button class="wish-button" data-wish="amour">AMOUR</button>
+            <button class="wish-button" data-wish="reves">RÊVES</button>
+            <button class="wish-button" data-wish="joie">JOIE</button>
         </div>
         
-        <!-- Bouton magique -->
-        <button class="magic-button">✨ TOUCHE MAGIQUE ✨</button>
+        <!-- Bouton message -->
+        <button class="message-button">MESSAGE POUR TOI</button>
     </div>
 
-    <!-- Message surprise -->
-    <div class="surprise-overlay" id="surprise-overlay">
-        <div class="surprise-content" id="surprise-content">
-            <div class="surprise-emoji" id="surprise-emoji">💖</div>
-            <div class="surprise-text" id="surprise-text"></div>
-            <button class="close-surprise" id="close-surprise">RETOUR À LA MAGIE</button>
+    <!-- Message personnalisé -->
+    <div class="message-overlay" id="message-overlay">
+        <div class="message-box">
+            <div class="message-title">Pour Marie Stella ❤️</div>
+            <div class="message-content" id="custom-message">
+                <!-- TON MESSAGE PERSONNALISÉ ICI -->
+                En cette nouvelle année 2026, je voulais te créer quelque chose d'unique.<br><br>
+                Que cette année t'apporte tout le bonheur que tu mérites, des rêves qui se réalisent, et des moments magiques à n'en plus finir.<br><br>
+                J'ai hâte de découvrir ce que 2026 nous réserve et de créer de beaux souvenirs à tes côtés.
+                <!-- FIN DU MESSAGE -->
+            </div>
+            <button class="close-message" id="close-message">RETOUR À LA MAGIE</button>
         </div>
     </div>
 
@@ -497,275 +490,329 @@
         const welcomeScreen = document.getElementById('welcome-screen');
         const mainScreen = document.getElementById('main-screen');
         const startButton = document.querySelector('.start-button');
-        const starfield = document.getElementById('starfield');
-        const wishBubbles = document.querySelectorAll('.wish-bubble');
-        const magicButton = document.querySelector('.magic-button');
-        const surpriseOverlay = document.getElementById('surprise-overlay');
-        const surpriseEmoji = document.getElementById('surprise-emoji');
-        const surpriseText = document.getElementById('surprise-text');
-        const closeSurprise = document.getElementById('close-surprise');
+        const canvas = document.getElementById('fireworks-canvas');
+        const ctx = canvas.getContext('2d');
+        const wishButtons = document.querySelectorAll('.wish-button');
+        const messageButton = document.querySelector('.message-button');
+        const messageOverlay = document.getElementById('message-overlay');
+        const closeMessage = document.getElementById('close-message');
+        const customMessage = document.getElementById('custom-message');
         
-        // Messages surprises
-        const surprises = {
-            1: {
-                emoji: '💖',
-                text: 'Que 2026 t\'apporte un amour pur et sincère'
-            },
-            2: {
-                emoji: '✨',
-                text: 'Que tous tes rêves les plus fous se réalisent'
-            },
-            3: {
-                emoji: '🎉',
-                text: 'Que chaque jour soit une fête de bonheur'
-            }
-        };
+        // Système de feux d'artifice
+        let fireworks = [];
+        let particles = [];
+        let animationId;
         
-        // Créer le ciel étoilé
-        function createStarfield() {
-            const starCount = Math.min(100, window.innerWidth / 10);
-            
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                
-                // Taille aléatoire
-                const size = Math.random() * 3 + 1;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                
-                // Position aléatoire
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                
-                // Animation aléatoire
-                const duration = Math.random() * 3 + 1;
-                star.style.setProperty('--duration', `${duration}s`);
-                
-                // Opacité aléatoire
-                star.style.opacity = Math.random() * 0.5 + 0.3;
-                
-                starfield.appendChild(star);
-            }
+        // Initialiser le canvas
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
         
-        // Créer des particules
-        function createParticles(x, y, count = 15, emoji = '✨') {
-            for (let i = 0; i < count; i++) {
-                setTimeout(() => {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    particle.innerHTML = emoji;
-                    particle.style.left = `${x}px`;
-                    particle.style.top = `${y}px`;
-                    
-                    // Taille aléatoire
-                    const size = Math.random() * 30 + 20;
-                    particle.style.fontSize = `${size}px`;
-                    
-                    // Couleur aléatoire
-                    const colors = ['#ff2d95', '#00f7ff', '#ffeb3b', '#9c27b0'];
-                    particle.style.color = colors[Math.floor(Math.random() * colors.length)];
-                    
-                    // Animation
-                    const angle = Math.random() * Math.PI * 2;
-                    const speed = 2 + Math.random() * 3;
-                    const vx = Math.cos(angle) * speed;
-                    const vy = Math.sin(angle) * speed;
-                    
-                    document.body.appendChild(particle);
-                    
-                    // Animer la particule
-                    let opacity = 1;
-                    const animate = () => {
-                        x += vx;
-                        y += vy;
-                        opacity -= 0.02;
-                        
-                        particle.style.left = `${x}px`;
-                        particle.style.top = `${y}px`;
-                        particle.style.opacity = opacity;
-                        
-                        if (opacity > 0) {
-                            requestAnimationFrame(animate);
-                        } else {
-                            particle.remove();
-                        }
-                    };
-                    
-                    animate();
-                }, i * 30);
+        window.addEventListener('resize', initCanvas);
+        
+        // Classe particule
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 8
+                };
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.015;
+                this.size = Math.random() * 3 + 1;
+            }
+            
+            update() {
+                this.velocity.y += 0.05; // Gravité
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= this.decay;
+            }
+            
+            draw() {
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
             }
         }
         
-        // Effet d'explosion
-        function createExplosion(x, y) {
-            const emojis = ['✨', '🌟', '⭐', '💫', '🎇', '🎆', '🔥', '💖'];
-            
-            for (let i = 0; i < 30; i++) {
-                setTimeout(() => {
-                    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-                    createParticles(x, y, 1, emoji);
-                }, i * 20);
-            }
-            
-            // Son discret (si supporté)
-            playSparkleSound();
-        }
-        
-        // Son d'étincelle
-        function playSparkleSound() {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
+        // Classe feu d'artifice
+        class Firework {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                this.particles = [];
                 
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.frequency.value = 800 + Math.random() * 400;
-                oscillator.type = 'sine';
-                
-                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.1);
-            } catch (e) {
-                // Ignorer si audio non supporté
-            }
-        }
-        
-        // Afficher un message surprise
-        function showSurprise(id) {
-            const surprise = surprises[id];
-            if (!surprise) return;
-            
-            surpriseEmoji.innerHTML = surprise.emoji;
-            surpriseText.textContent = surprise.text;
-            surpriseOverlay.classList.add('active');
-            
-            createExplosion(window.innerWidth / 2, window.innerHeight / 2);
-        }
-        
-        // Initialisation
-        function init() {
-            createStarfield();
-            
-            // Démarrer l'expérience
-            startButton.addEventListener('click', () => {
-                welcomeScreen.classList.add('fade-out');
-                
-                setTimeout(() => {
-                    mainScreen.classList.add('active');
-                    createExplosion(window.innerWidth / 2, window.innerHeight / 2);
-                }, 800);
-            });
-            
-            // Voeux cliquables
-            wishBubbles.forEach(bubble => {
-                bubble.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const surpriseId = bubble.dataset.surprise;
-                    showSurprise(surpriseId);
-                    
-                    // Effet sur la bulle
-                    const rect = bubble.getBoundingClientRect();
-                    createExplosion(rect.left + rect.width / 2, rect.top + rect.height / 2);
-                });
-            });
-            
-            // Bouton magique
-            magicButton.addEventListener('click', () => {
-                createExplosion(window.innerWidth / 2, window.innerHeight / 2);
-                
-                // Changer temporairement le texte
-                const originalText = magicButton.textContent;
-                magicButton.textContent = '✨ WOW ! ✨';
-                magicButton.style.background = 'linear-gradient(45deg, #ffeb3b, #9c27b0)';
-                
-                setTimeout(() => {
-                    magicButton.textContent = originalText;
-                    magicButton.style.background = 'linear-gradient(45deg, #ff2d95, #9c27b0)';
-                }, 1000);
-            });
-            
-            // Fermer le message surprise
-            closeSurprise.addEventListener('click', () => {
-                surpriseOverlay.classList.remove('active');
-                createExplosion(window.innerWidth / 2, window.innerHeight / 2);
-            });
-            
-            // Fermer en cliquant à l'extérieur
-            surpriseOverlay.addEventListener('click', (e) => {
-                if (e.target === surpriseOverlay) {
-                    surpriseOverlay.classList.remove('active');
-                    createExplosion(window.innerWidth / 2, window.innerHeight / 2);
+                // Créer des particules pour l'explosion
+                for (let i = 0; i < 100; i++) {
+                    this.particles.push(new Particle(this.x, this.y, this.color));
                 }
-            });
+            }
             
-            // Clic n'importe où pour des particules
-            document.addEventListener('click', (e) => {
-                if (e.target !== startButton && 
-                    e.target !== magicButton && 
-                    !e.target.closest('.wish-bubble') &&
-                    !e.target.closest('.surprise-content')) {
-                    
-                    createParticles(e.clientX, e.clientY, 5);
-                }
-            });
-            
-            // Support tactile
-            document.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 1) {
-                    const touch = e.touches[0];
-                    if (touch.target !== startButton && 
-                        touch.target !== magicButton && 
-                        !touch.target.closest('.wish-bubble') &&
-                        !touch.target.closest('.surprise-content')) {
-                        
-                        createParticles(touch.clientX, touch.clientY, 3);
+            update() {
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    this.particles[i].update();
+                    if (this.particles[i].alpha <= 0) {
+                        this.particles.splice(i, 1);
                     }
                 }
-            }, { passive: true });
+            }
             
-            // Ajuster la position des bulles sur mobile
-            function adjustBubblePositions() {
-                const bubbles = document.querySelectorAll('.wish-bubble');
+            draw() {
+                this.particles.forEach(particle => particle.draw());
+            }
+            
+            finished() {
+                return this.particles.length === 0;
+            }
+        }
+        
+        // Créer un feu d'artifice
+        function createFirework(x, y) {
+            fireworks.push(new Firework(x, y));
+        }
+        
+        // Animation des feux d'artifice
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Mettre à jour et dessiner les feux d'artifice
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                fireworks[i].update();
+                fireworks[i].draw();
                 
-                if (window.innerWidth < 480) {
-                    // Petit écran portrait
-                    bubbles[0].style.top = '15%';
-                    bubbles[0].style.left = '5%';
-                    bubbles[1].style.top = '55%';
-                    bubbles[1].style.right = '5%';
-                    bubbles[2].style.bottom = '15%';
-                    bubbles[2].style.left = '50%';
-                } else if (window.innerHeight < 500 && window.innerWidth > window.innerHeight) {
-                    // Paysage
-                    bubbles[0].style.top = '30%';
-                    bubbles[0].style.left = '10%';
-                    bubbles[1].style.top = '30%';
-                    bubbles[1].style.right = '10%';
-                    bubbles[2].style.top = '30%';
-                    bubbles[2].style.left = '50%';
+                if (fireworks[i].finished()) {
+                    fireworks.splice(i, 1);
                 }
             }
             
-            window.addEventListener('resize', adjustBubblePositions);
-            adjustBubblePositions();
-            
-            // Prévenir le zoom sur iOS
-            document.addEventListener('gesturestart', (e) => {
-                e.preventDefault();
-            });
-            
-            console.log('🎆 Expérience 2026 prête pour Marie Stella !');
-            console.log('💫 Touchez tout pour de la magie !');
+            animationId = requestAnimationFrame(animate);
         }
         
-        // Démarrer quand la page est chargée
-        window.addEventListener('DOMContentLoaded', init);
+        // Créer des feux d'artifice aléatoires
+        function createRandomFireworks(count = 5) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height * 0.8;
+                    createFirework(x, y);
+                }, i * 200);
+            }
+        }
+        
+        // Son de feu d'artifice
+        function playFireworkSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Créer un son d'explosion
+                const oscillator1 = audioContext.createOscillator();
+                const oscillator2 = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator1.connect(gainNode);
+                oscillator2.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator1.frequency.value = 200;
+                oscillator2.frequency.value = 400;
+                oscillator1.type = 'sine';
+                oscillator2.type = 'triangle';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator1.start(audioContext.currentTime);
+                oscillator2.start(audioContext.currentTime);
+                oscillator1.stop(audioContext.currentTime + 0.5);
+                oscillator2.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                // Audio non supporté
+            }
+        }
+        
+        // Démarrer l'expérience
+        startButton.addEventListener('click', () => {
+            welcomeScreen.classList.add('fade-out');
+            
+            setTimeout(() => {
+                mainScreen.classList.add('active');
+                initCanvas();
+                animate();
+                
+                // Feux d'artifice de bienvenue
+                setTimeout(() => {
+                    createRandomFireworks(10);
+                    playFireworkSound();
+                }, 500);
+            }, 800);
+        });
+        
+        // Gestion des voeux
+        wishButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const wishType = button.dataset.wish;
+                
+                // Couleur selon le voeu
+                let color;
+                switch(wishType) {
+                    case 'amour':
+                        color = '#ff2d95'; // Rose
+                        break;
+                    case 'reves':
+                        color = '#00f7ff'; // Bleu
+                        break;
+                    case 'joie':
+                        color = '#ffd700'; // Or
+                        break;
+                }
+                
+                // Créer un feu d'artifice spécial
+                const rect = button.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 2;
+                
+                // Feu d'artifice en forme de coeur pour l'amour
+                if (wishType === 'amour') {
+                    createHeartFirework(x, y, color);
+                } else {
+                    createSpecialFirework(x, y, color);
+                }
+                
+                playFireworkSound();
+                
+                // Animation du bouton
+                button.style.transform = 'scale(0.9)';
+                button.style.boxShadow = `0 0 40px ${color}`;
+                
+                setTimeout(() => {
+                    button.style.transform = '';
+                    button.style.boxShadow = '';
+                }, 300);
+            });
+        });
+        
+        // Feu d'artifice en forme de coeur
+        function createHeartFirework(x, y, color) {
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    const t = i / 20;
+                    // Équation paramétrique d'un cœur
+                    const heartX = 16 * Math.pow(Math.sin(t), 3);
+                    const heartY = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                    
+                    const particle = new Particle(
+                        x + heartX * 2,
+                        y + heartY * 2,
+                        color
+                    );
+                    particle.size = 2;
+                    
+                    // Ajouter directement aux particules
+                    fireworks.push({
+                        particles: [particle],
+                        update: function() {
+                            this.particles[0].update();
+                        },
+                        draw: function() {
+                            this.particles[0].draw();
+                        },
+                        finished: function() {
+                            return this.particles[0].alpha <= 0;
+                        }
+                    });
+                }, i * 10);
+            }
+        }
+        
+        // Feu d'artifice spécial
+        function createSpecialFirework(x, y, color) {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createFirework(x + Math.random() * 100 - 50, y + Math.random() * 100 - 50);
+                }, i * 100);
+            }
+        }
+        
+        // Bouton message
+        messageButton.addEventListener('click', () => {
+            messageOverlay.classList.add('active');
+            
+            // Feux d'artifice autour
+            createRandomFireworks(3);
+        });
+        
+        // Fermer le message
+        closeMessage.addEventListener('click', () => {
+            messageOverlay.classList.remove('active');
+            createRandomFireworks(2);
+        });
+        
+        // Fermer en cliquant à l'extérieur
+        messageOverlay.addEventListener('click', (e) => {
+            if (e.target === messageOverlay) {
+                messageOverlay.classList.remove('active');
+                createRandomFireworks(2);
+            }
+        });
+        
+        // Feux d'artifice aléatoires en continu
+        setInterval(() => {
+            if (mainScreen.classList.contains('active')) {
+                createRandomFireworks(1);
+            }
+        }, 3000);
+        
+        // Position responsive du bouton message
+        function adjustMessageButton() {
+            const messageButton = document.querySelector('.message-button');
+            const isLandscape = window.innerWidth > window.innerHeight;
+            
+            if (window.innerHeight < 600) {
+                messageButton.style.bottom = '50px';
+                messageButton.style.fontSize = '1rem';
+                messageButton.style.padding = '12px 25px';
+            }
+            
+            if (isLandscape && window.innerHeight < 400) {
+                messageButton.style.bottom = '20px';
+            }
+        }
+        
+        window.addEventListener('resize', adjustMessageButton);
+        adjustMessageButton();
+        
+        // Personnaliser le message ici
+        customMessage.innerHTML = `
+            Ma chère Marie Stella,<br><br>
+            
+            En cette année 2026 qui commence, je voulais te créer quelque chose d'aussi unique que toi.<br><br>
+            
+            Que cette nouvelle année soit remplie de moments magiques, de rires partagés et de découvertes extraordinaires.<br><br>
+            
+            Je te souhaite tout le bonheur du monde, que tes rêves les plus fous se réalisent, et que chaque jour t'apporte son lot de joie et d'émerveillement.<br><br>
+            
+            J'ai hâte de découvrir les merveilles que 2026 nous réserve, et de créer avec toi des souvenirs inoubliables.<br><br>
+            
+            <span style="color: #ffd700; font-weight: bold;">Bonne année 2026 !</span><br><br>
+            
+            Avec toute mon affection.
+        `;
+        
+        // Prévenir le zoom iOS
+        document.addEventListener('gesturestart', (e) => {
+            e.preventDefault();
+        });
+        
+        console.log('🎇 Feux d\'artifice 2026 prêts pour Marie Stella !');
     </script>
 </body>
 </html>
