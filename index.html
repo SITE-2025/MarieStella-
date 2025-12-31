@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bonne Année 2026 - Mon Cœur</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>🌟 2026 - Pour Marie Stella</title>
     <style>
         * {
             margin: 0;
@@ -16,518 +12,601 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0c0032 0%, #190061 30%, #240090 70%, #3500d3 100%);
-            color: #fff;
-            min-height: 100vh;
-            overflow-x: hidden;
-            padding: 20px;
+            background: #000;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            padding: 40px 0;
-            animation: fadeIn 2s ease-out;
-        }
-
-        h1 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 4.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
-            color: #ffd700;
-        }
-
-        .subtitle {
-            font-size: 1.3rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto 30px;
-        }
-
-        .heart-container {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            margin: 40px 0;
-        }
-
-        .heart {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 100px;
-            color: #ff4081;
-            animation: heartbeat 1.5s infinite;
-            text-shadow: 0 0 20px rgba(255, 64, 129, 0.8);
-        }
-
-        .main-content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px;
-            margin: 40px 0;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-        }
-
-        .card h2 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #ffd700;
-        }
-
-        .message {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
-
-        .year-display {
-            font-size: 8rem;
-            font-weight: 700;
-            text-align: center;
-            margin: 30px 0;
-            background: linear-gradient(to right, #ffd700, #ff4081, #00bcd4);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-            animation: glow 3s infinite alternate;
-        }
-
-        .fireworks-container {
+        /* Canvas pour les effets spéciaux */
+        #backgroundCanvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
             z-index: -1;
         }
 
-        .firework {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #fff;
-        }
-
-        .interactive-section {
+        /* Conteneur principal */
+        .container {
+            position: relative;
+            height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-            margin: 40px 0;
+            padding: 20px;
+            z-index: 2;
         }
 
-        .btn {
-            background: linear-gradient(45deg, #ff4081, #ffd700);
+        /* Nom et année */
+        .name-title {
+            font-size: clamp(2rem, 8vw, 4.5rem);
+            text-align: center;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeInUp 2s ease 0.5s forwards;
+            background: linear-gradient(45deg, #ff00ff, #00ffff, #ffff00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        /* Conteneur des 3 voeux */
+        .wishes-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+            max-width: 1200px;
+            opacity: 0;
+            animation: fadeInUp 2s ease 1s forwards;
+        }
+
+        /* Style des voeux */
+        .wish {
+            width: 300px;
+            height: 300px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .wish-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+        }
+
+        .wish:hover .wish-inner {
+            transform: rotateY(180deg);
+        }
+
+        .wish-front, .wish-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .wish-front {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .wish-back {
+            background: linear-gradient(45deg, rgba(255, 0, 255, 0.2), rgba(0, 255, 255, 0.2));
+            transform: rotateY(180deg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .wish-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px currentColor);
+        }
+
+        .wish-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Effet de particules cliquables */
+        .particle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Bouton central */
+        .center-button {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
             border: none;
             border-radius: 50px;
             color: white;
-            font-size: 1.2rem;
-            font-weight: 600;
-            padding: 15px 40px;
             cursor: pointer;
-            margin: 10px;
+            opacity: 0;
+            animation: fadeInUp 2s ease 2s forwards;
+            z-index: 10;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4);
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
         }
 
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.6);
+        .center-button:hover {
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.7);
         }
 
-        .hidden-message {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.8s ease;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            margin-top: 20px;
-            padding: 0 30px;
-        }
-
-        .hidden-message.active {
-            max-height: 300px;
-            padding: 30px;
-        }
-
-        .personal-note {
-            font-style: italic;
+        /* Messages surprises */
+        .surprise-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid #ff00ff;
             text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 100;
+            transition: transform 0.5s ease;
+            max-width: 500px;
+            width: 90%;
+            backdrop-filter: blur(10px);
         }
 
-        footer {
-            text-align: center;
-            padding: 30px 0;
-            margin-top: 40px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 0.9rem;
-            opacity: 0.8;
+        .surprise-message.active {
+            transform: translate(-50%, -50%) scale(1);
         }
 
-        .countdown {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 40px 0;
+        .close-surprise {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
         }
 
-        .countdown-item {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            min-width: 100px;
-        }
-
-        .countdown-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #ffd700;
-        }
-
-        .countdown-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        /* Année flottante */
+        .floating-year {
+            position: fixed;
+            font-size: 20vw;
+            font-weight: bold;
+            opacity: 0.03;
+            z-index: -1;
+            color: white;
+            animation: float 30s infinite linear;
+            pointer-events: none;
         }
 
         /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        @keyframes heartbeat {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            5% { transform: translate(-50%, -50%) scale(1.1); }
-            10% { transform: translate(-50%, -50%) scale(1); }
-            15% { transform: translate(-50%, -50%) scale(1.1); }
-            20% { transform: translate(-50%, -50%) scale(1); }
-            100% { transform: translate(-50%, -50%) scale(1); }
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                transform: translate(100px, 100px) rotate(360deg);
+            }
         }
 
         @keyframes glow {
-            0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-            100% { text-shadow: 0 0 30px rgba(255, 64, 129, 0.8), 0 0 40px rgba(255, 64, 129, 0.6); }
+            0%, 100% {
+                box-shadow: 0 0 20px #ff00ff;
+            }
+            50% {
+                box-shadow: 0 0 40px #00ffff;
+            }
         }
 
         /* Responsive */
+        @media (max-width: 1000px) {
+            .wish {
+                width: 250px;
+                height: 250px;
+            }
+        }
+
         @media (max-width: 768px) {
-            h1 { font-size: 3rem; }
-            .year-display { font-size: 5rem; }
-            .card { padding: 20px; }
-            .countdown { flex-wrap: wrap; }
-            .countdown-item { min-width: 80px; }
+            .wishes-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .wish {
+                width: 280px;
+                height: 280px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="fireworks-container" id="fireworks"></div>
+    <!-- Canvas pour effets -->
+    <canvas id="backgroundCanvas"></canvas>
     
+    <!-- Année flottante en arrière-plan -->
+    <div class="floating-year">2026</div>
+    
+    <!-- Contenu principal -->
     <div class="container">
-        <header>
-            <h1>Pour la plus merveilleuse</h1>
-            <p class="subtitle">Cette nouvelle année 2026, je voulais te créer quelque chose d'unique pour exprimer tout ce que je ressens pour toi.</p>
-            
-            <div class="heart-container">
-                <div class="heart">❤️</div>
-            </div>
-            
-            <div class="year-display">2026</div>
-            
-            <div class="countdown" id="countdown">
-                <div class="countdown-item">
-                    <div class="countdown-number" id="days">00</div>
-                    <div class="countdown-label">Jours</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="hours">00</div>
-                    <div class="countdown-label">Heures</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="minutes">00</div>
-                    <div class="countdown-label">Minutes</div>
-                </div>
-                <div class="countdown-item">
-                    <div class="countdown-number" id="seconds">00</div>
-                    <div class="countdown-label">Secondes</div>
-                </div>
-            </div>
-        </header>
+        <h1 class="name-title">MARIE STELLA</h1>
         
-        <div class="main-content">
-            <div class="card">
-                <h2>Ma chère ❤️</h2>
-                <div class="message">
-                    <p>En cette nouvelle année 2026, je veux te dire à quel point tu comptes pour moi. Chaque moment passé à tes côtés est un trésor, chaque sourire de toi illumine mes journées.</p>
-                    <p>Je te souhaite une année remplie de bonheur, de réussite et de rêves qui se réalisent. Que chaque jour de 2026 t'apporte son lot de joies et de belles surprises.</p>
-                    <p>J'ai hâte de vivre de nouvelles aventures à tes côtés, de créer des souvenirs inoubliables et de voir notre relation s'épanouir encore davantage.</p>
+        <div class="wishes-container">
+            <!-- Voeu 1 -->
+            <div class="wish" data-surprise="1">
+                <div class="wish-inner">
+                    <div class="wish-front">
+                        <div class="wish-icon" style="color: #ff00ff;">❤️</div>
+                        <div class="wish-text">Amour</div>
+                    </div>
+                    <div class="wish-back">
+                        <div class="wish-icon" style="color: #00ffff;">✨</div>
+                        <div class="wish-text">Que l'amour t'entoure</div>
+                    </div>
                 </div>
             </div>
             
-            <div class="card">
-                <h2>Mes souhaits pour toi</h2>
-                <div class="message">
-                    <p>✨ Que la santé et la vitalité t'accompagnent chaque jour</p>
-                    <p>✨ Que tes projets les plus chers se réalisent</p>
-                    <p>✨ Que tu sois entourée d'amour et d'amitié</p>
-                    <p>✨ Que tu découvres de nouvelles passions</p>
-                    <p>✨ Que chaque journée t'apporte son lot de bonheurs simples</p>
-                    <p>✨ Que nos moments ensemble soient toujours magiques</p>
+            <!-- Voeu 2 -->
+            <div class="wish" data-surprise="2">
+                <div class="wish-inner">
+                    <div class="wish-front">
+                        <div class="wish-icon" style="color: #ffff00;">🌟</div>
+                        <div class="wish-text">Rêves</div>
+                    </div>
+                    <div class="wish-back">
+                        <div class="wish-icon" style="color: #ff00ff;">💫</div>
+                        <div class="wish-text">Que tes rêves se réalisent</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Voeu 3 -->
+            <div class="wish" data-surprise="3">
+                <div class="wish-inner">
+                    <div class="wish-front">
+                        <div class="wish-icon" style="color: #00ffff;">🎉</div>
+                        <div class="wish-text">Joie</div>
+                    </div>
+                    <div class="wish-back">
+                        <div class="wish-icon" style="color: #ffff00;">😊</div>
+                        <div class="wish-text">Que la joie t'accompagne</div>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <div class="interactive-section">
-            <button class="btn" id="showMessageBtn">
-                <i class="fas fa-gift"></i> Clique pour un message spécial
-            </button>
-            
-            <div class="hidden-message" id="hiddenMessage">
-                <h3 style="text-align: center; margin-bottom: 15px; color: #ffd700;">Mon vœu le plus cher</h3>
-                <p style="text-align: center; font-size: 1.2rem;">
-                    Mon plus grand souhait pour 2026 est de passer encore plus de moments merveilleux à tes côtés, 
-                    de te voir rayonner de bonheur, et de construire avec toi quelque chose de beau et de durable. 
-                    Tu es la personne la plus incroyable que j'aie jamais rencontrée, et j'ai hâte de découvrir 
-                    tout ce que cette nouvelle année nous réserve ensemble.
-                </p>
-                <p style="text-align: center; margin-top: 15px; font-weight: 600;">
-                    Je t'embrasse tendrement et te souhaite une excellente année 2026 !
-                </p>
-            </div>
-            
-            <button class="btn" id="fireworksBtn">
-                <i class="fas fa-fire"></i> Feux d'artifice pour toi !
-            </button>
-        </div>
-        
-        <div class="personal-note">
-            <p>Ce site a été créé spécialement pour toi, avec tout mon cœur, pour marquer le début de cette année 2026.</p>
-            <p style="margin-top: 10px;">Avec tout mon amour ❤️</p>
-        </div>
-        
-        <footer>
-            <p>© 2026 - Créé avec amour pour la plus merveilleuse</p>
-            <p style="margin-top: 10px;">Que cette année soit remplie de moments magiques !</p>
-        </footer>
+        <button class="center-button">✨ TOUCHÉ-MOI ✨</button>
+    </div>
+    
+    <!-- Messages surprises -->
+    <div class="surprise-message" id="surprise1">
+        <button class="close-surprise">×</button>
+        <div style="font-size: 3rem; margin-bottom: 20px;">💖</div>
+        <div style="font-size: 1.5rem; color: #ff00ff;">Que chaque jour soit rempli d'affection et de tendresse</div>
+    </div>
+    
+    <div class="surprise-message" id="surprise2">
+        <button class="close-surprise">×</button>
+        <div style="font-size: 3rem; margin-bottom: 20px;">🌌</div>
+        <div style="font-size: 1.5rem; color: #00ffff;">Que les étoiles guident tes plus beaux projets</div>
+    </div>
+    
+    <div class="surprise-message" id="surprise3">
+        <button class="close-surprise">×</button>
+        <div style="font-size: 3rem; margin-bottom: 20px;">🎇</div>
+        <div style="font-size: 1.5rem; color: #ffff00;">Que ton sourire illumine toute l'année</div>
     </div>
 
     <script>
-        // Compte à rebours pour le nouvel an
-        function updateCountdown() {
-            const now = new Date();
-            const newYear = new Date(now.getFullYear() + 1, 0, 1); // 1er janvier de l'année prochaine
-            const diff = newYear - now;
+        // Effets canvas avancés
+        const canvas = document.getElementById('backgroundCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Particules
+        let particles = [];
+        const particleCount = 100;
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 5 + 1;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+                this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
             
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
             
-            document.getElementById('days').textContent = days.toString().padStart(2, '0');
-            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
         
-        // Mettre à jour le compte à rebours toutes les secondes
-        setInterval(updateCountdown, 1000);
-        updateCountdown(); // Appel initial
-        
-        // Afficher le message caché
-        document.getElementById('showMessageBtn').addEventListener('click', function() {
-            const hiddenMessage = document.getElementById('hiddenMessage');
-            hiddenMessage.classList.toggle('active');
-            
-            if (hiddenMessage.classList.contains('active')) {
-                this.innerHTML = '<i class="fas fa-heart"></i> Message spécial';
-            } else {
-                this.innerHTML = '<i class="fas fa-gift"></i> Clique pour un message spécial';
+        // Initialiser les particules
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
             }
+        }
+        
+        // Animation des particules
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Effet de connexion entre particules
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - distance/100)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+                
+                particles[i].update();
+                particles[i].draw();
+            }
+            
+            requestAnimationFrame(animateParticles);
+        }
+        
+        // Redimensionnement
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
         });
         
-        // Créer des feux d'artifice
-        function createFirework(x, y) {
-            const firework = document.createElement('div');
-            firework.classList.add('firework');
-            firework.style.left = x + 'px';
-            firework.style.top = y + 'px';
-            
-            // Couleurs aléatoires
-            const colors = ['#ff4081', '#ffd700', '#00bcd4', '#4caf50', '#9c27b0'];
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            firework.style.backgroundColor = color;
-            firework.style.boxShadow = `0 0 10px ${color}`;
-            
-            document.getElementById('fireworks').appendChild(firework);
-            
-            // Animation du feu d'artifice
-            const particles = 30;
-            for (let i = 0; i < particles; i++) {
-                setTimeout(() => {
-                    const particle = document.createElement('div');
-                    particle.classList.add('firework');
-                    particle.style.left = x + 'px';
-                    particle.style.top = y + 'px';
-                    particle.style.backgroundColor = color;
-                    particle.style.boxShadow = `0 0 10px ${color}`;
-                    
-                    document.getElementById('fireworks').appendChild(particle);
-                    
-                    // Direction aléatoire
-                    const angle = Math.random() * Math.PI * 2;
-                    const velocity = 2 + Math.random() * 3;
-                    const vx = Math.cos(angle) * velocity;
-                    const vy = Math.sin(angle) * velocity;
-                    
-                    let posX = x;
-                    let posY = y;
-                    const particleAnimation = setInterval(() => {
-                        posX += vx;
-                        posY += vy;
-                        particle.style.left = posX + 'px';
-                        particle.style.top = posY + 'px';
-                        
-                        // Réduire l'opacité
-                        const currentOpacity = parseFloat(particle.style.opacity || 1);
-                        particle.style.opacity = (currentOpacity - 0.02).toString();
-                        
-                        // Supprimer la particule quand elle devient invisible
-                        if (currentOpacity <= 0) {
-                            clearInterval(particleAnimation);
-                            particle.remove();
-                        }
-                    }, 30);
-                }, i * 30);
+        // Effets de clic
+        document.addEventListener('click', function(e) {
+            // Créer des étoiles au clic
+            for (let i = 0; i < 20; i++) {
+                createStar(e.clientX, e.clientY);
             }
             
-            // Supprimer le feu d'artifice principal après l'explosion
-            setTimeout(() => {
-                firework.remove();
-            }, 1000);
+            // Son de clic (optionnel)
+            playClickSound();
+        });
+        
+        function createStar(x, y) {
+            const star = document.createElement('div');
+            star.className = 'particle';
+            star.style.left = x + 'px';
+            star.style.top = y + 'px';
+            star.style.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+            star.innerHTML = ['✨', '🌟', '⭐', '💫', '🌠'][Math.floor(Math.random() * 5)];
+            star.style.fontSize = Math.random() * 30 + 10 + 'px';
+            
+            document.body.appendChild(star);
+            
+            // Animation
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 2 + Math.random() * 3;
+            const vx = Math.cos(angle) * speed;
+            const vy = Math.sin(angle) * speed;
+            
+            let opacity = 1;
+            const animate = setInterval(() => {
+                x += vx;
+                y += vy;
+                opacity -= 0.02;
+                
+                star.style.left = x + 'px';
+                star.style.top = y + 'px';
+                star.style.opacity = opacity;
+                
+                if (opacity <= 0) {
+                    clearInterval(animate);
+                    star.remove();
+                }
+            }, 16);
         }
         
-        // Bouton pour activer les feux d'artifice
-        document.getElementById('fireworksBtn').addEventListener('click', function() {
-            // Créer plusieurs feux d'artifice
-            for (let i = 0; i < 10; i++) {
+        // Gestion des voeux
+        const wishes = document.querySelectorAll('.wish');
+        const surpriseMessages = document.querySelectorAll('.surprise-message');
+        const closeButtons = document.querySelectorAll('.close-surprise');
+        const centerButton = document.querySelector('.center-button');
+        
+        // Au clic sur un voeu
+        wishes.forEach(wish => {
+            wish.addEventListener('click', function() {
+                const surpriseId = this.dataset.surprise;
+                document.getElementById(`surprise${surpriseId}`).classList.add('active');
+                
+                // Effet spécial
+                createFireworks();
+            });
+        });
+        
+        // Fermer les messages
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.parentElement.classList.remove('active');
+            });
+        });
+        
+        // Fermer en cliquant à l'extérieur
+        surpriseMessages.forEach(message => {
+            message.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+        
+        // Bouton central
+        centerButton.addEventListener('click', function() {
+            // Effet spécial majeur
+            createMegaExplosion();
+            
+            // Changer le texte brièvement
+            const originalText = this.textContent;
+            this.textContent = '🌟 WOW ! 🌟';
+            
+            setTimeout(() => {
+                this.textContent = originalText;
+            }, 1000);
+        });
+        
+        // Effets spéciaux
+        function createFireworks() {
+            for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
                     const x = Math.random() * window.innerWidth;
-                    const y = Math.random() * (window.innerHeight / 2);
-                    createFirework(x, y);
-                }, i * 200);
+                    const y = Math.random() * window.innerHeight;
+                    createStar(x, y);
+                }, i * 20);
             }
-            
-            // Jouer un son de feu d'artifice (si autorisé)
-            const fireworkSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-firework-explosion-3093.mp3');
-            fireworkSound.volume = 0.2;
-            fireworkSound.play().catch(e => console.log("Le son ne peut pas être joué sans interaction utilisateur"));
-        });
-        
-        // Feux d'artifice aléatoires
-        setInterval(() => {
-            if (Math.random() > 0.7) { // 30% de chance d'avoir un feu d'artifice aléatoire
-                const x = Math.random() * window.innerWidth;
-                const y = Math.random() * (window.innerHeight / 2);
-                createFirework(x, y);
-            }
-        }, 3000);
-        
-        // Effet de neige ou de confettis
-        function createConfetti() {
-            const confetti = document.createElement('div');
-            confetti.classList.add('firework');
-            confetti.style.left = Math.random() * window.innerWidth + 'px';
-            confetti.style.top = '-10px';
-            
-            // Formes de confettis
-            const shapes = ['circle', 'square', 'triangle'];
-            const shape = shapes[Math.floor(Math.random() * shapes.length)];
-            
-            if (shape === 'triangle') {
-                confetti.style.width = '0';
-                confetti.style.height = '0';
-                confetti.style.borderLeft = '5px solid transparent';
-                confetti.style.borderRight = '5px solid transparent';
-                confetti.style.borderBottom = '10px solid';
-                confetti.style.background = 'none';
-            } else {
-                confetti.style.width = '10px';
-                confetti.style.height = shape === 'circle' ? '10px' : '8px';
-                confetti.style.borderRadius = shape === 'circle' ? '50%' : '0';
-            }
-            
-            // Couleurs aléatoires
-            const colors = ['#ff4081', '#ffd700', '#00bcd4', '#4caf50', '#9c27b0', '#ff9800'];
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            
-            if (shape === 'triangle') {
-                confetti.style.borderBottomColor = color;
-            } else {
-                confetti.style.backgroundColor = color;
-                confetti.style.boxShadow = `0 0 5px ${color}`;
-            }
-            
-            document.getElementById('fireworks').appendChild(confetti);
-            
-            // Animation de chute
-            let posY = -10;
-            const speed = 2 + Math.random() * 3;
-            const swing = Math.random() * 4 - 2; // Mouvement latéral
-            let posX = parseFloat(confetti.style.left);
-            
-            const fall = setInterval(() => {
-                posY += speed;
-                posX += swing;
-                
-                confetti.style.top = posY + 'px';
-                confetti.style.left = posX + 'px';
-                
-                // Rotation
-                confetti.style.transform = `rotate(${posY}deg)`;
-                
-                // Supprimer quand il sort de l'écran
-                if (posY > window.innerHeight) {
-                    clearInterval(fall);
-                    confetti.remove();
-                }
-            }, 30);
         }
         
-        // Créer des confettis régulièrement
-        setInterval(createConfetti, 200);
+        function createMegaExplosion() {
+            // Explosion en forme de coeur
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            for (let i = 0; i < 200; i++) {
+                setTimeout(() => {
+                    // Créer un motif en forme de coeur
+                    const t = i / 20;
+                    const x = 16 * Math.pow(Math.sin(t), 3);
+                    const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                    
+                    const star = document.createElement('div');
+                    star.className = 'particle';
+                    star.style.left = (centerX + x * 10) + 'px';
+                    star.style.top = (centerY + y * 10) + 'px';
+                    star.style.color = '#ff00ff';
+                    star.innerHTML = '❤️';
+                    star.style.fontSize = '20px';
+                    
+                    document.body.appendChild(star);
+                    
+                    // Animation
+                    let opacity = 1;
+                    const animate = setInterval(() => {
+                        opacity -= 0.02;
+                        star.style.opacity = opacity;
+                        star.style.transform = `scale(${1 + (1 - opacity)})`;
+                        
+                        if (opacity <= 0) {
+                            clearInterval(animate);
+                            star.remove();
+                        }
+                    }, 16);
+                }, i * 10);
+            }
+        }
+        
+        // Son interactif (très discret)
+        function playClickSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800 + Math.random() * 400;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch(e) {
+                // Son non supporté, pas grave
+            }
+        }
+        
+        // Démarrer tout
+        initParticles();
+        animateParticles();
+        
+        // Animation du nom
+        const nameTitle = document.querySelector('.name-title');
+        let hue = 0;
+        
+        setInterval(() => {
+            hue = (hue + 1) % 360;
+            nameTitle.style.background = `linear-gradient(45deg, 
+                hsl(${hue}, 100%, 50%), 
+                hsl(${(hue + 60) % 360}, 100%, 50%), 
+                hsl(${(hue + 120) % 360}, 100%, 50%))`;
+            nameTitle.style.webkitBackgroundClip = 'text';
+            nameTitle.style.backgroundClip = 'text';
+        }, 50);
+        
+        // Message de démarrage
+        console.log('🌟 Site 2026 pour Marie Stella chargé !');
+        console.log('✨ Clique partout pour des surprises !');
     </script>
 </body>
 </html>
